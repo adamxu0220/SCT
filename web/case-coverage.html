@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>S.C.T</title>
+    <link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
+    <!--<script src="/plugins/skins/jquery.icheck.js"></script>-->
+    <!--<link href="/plugins/skins/all.css" rel="stylesheet" type="text/css">-->
+    <link href="/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/css/real_sso.css" rel="stylesheet" type="text/css">
+    <link href="/css/m-task.css" rel="stylesheet" type="text/css">
+    <link href="/plugins/jquery_ui/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/css/jquery.multiselect.css" />
+    <script src="/js/jquery-1.11.1.js"></script>
+    <script src="/js/index_new.js" type="text/javascript"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/confirm.js"></script>
+    <script src="/plugins/jquery_ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="/js/jquery.multiselect.js"></script>
+    <script src="/js/highcharts.js"></script>
+    <script src="/js/heatmap.js"></script>
+    <script src="/js/highcharts-3d.js"></script>
+    <script src="/js/exporting.js"></script>
+    <script src="/js/exporting-excel.js"></script>
+    <script src="/js/sorttable.js"></script>
+</head>
+<style>
+ .myClass{width:184px;}
+</style>
+<script>
+    $(function(){
+		var bd = document.body;
+		var shade = document.getElementById("shade-bg");
+		shade.style.width = bd.scrollWidth+"px";
+		shade.style.height = bd.scrollHeight+"px";
+		var screenW=document.documentElement.clientWidth;
+		if(screenW < 1200){
+			$(".bd-cloud-topbar,.nav_w,#footer").css("width","1200px");
+			//$("#account").css("left","1040px");
+		}
+		$( ".bd-cloud-dropdown-name").click(
+			function() {
+				$(".bd-cloud-dropdown-menu").slideToggle("fast");
+		});
+		getCaseInfo_extend("Any");
+        $(".leftbar").css("height", $(".rightbar").height()+"px");
+        var pname = GetQueryString("pname");
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return unescape(r[2]); return null;
+        }
+        switch (pname){
+            case "overview":
+                getCaseDistData_extend();
+                break;
+            case "detail":
+                genCaseDetail(GetQueryString("case_type"), GetQueryString("dut_type"));
+                break
+        }
+
+    });
+</script>
+<body>
+    
+    <div class="bd-cloud-topbar">
+	<ul class="bd-clout-user-nav">
+	    <li class="bd-cloud-dropdown bd-clout-user-nav-item">
+		<span class="bd-cloud-dropdown-name">
+		    <a id="user" class="bd-cloud-a"></a>
+		    <i class="bd-cloud-dropdown-ico"></i>
+		</span>
+		<ul class="bd-cloud-dropdown-menu">
+		    <li class="bd-cloud-dropdown-item" id="create-task" onclick="window.location.href='add-case.html'">New task</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="task-management" onclick="window.location.href='task-management.html?pname=my-task'">Task Management</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="log-off" onclick="deleteCookie()">Log off</li>
+		</ul>
+	    </li>
+	    <li class="bd-clout-user-nav-item"><a href="mailto:zhenwang@marvell.com" class="bd-cloud-a">Help</a></li>
+	<ul>
+    </div>
+		
+    <div class="logo"><a href="javascript:void(0)"></a></div>
+
+    <div class="nav_w">
+      <div class="nav">
+        <ul>
+            <li><a href="home1.html">Home</a></li>
+            <li><a href="add-case.html">Create Task</a></li>
+            <li><a href="task-management.html?pname=my-task">Task Managment</a></li>
+            <li><a href="test-result.html?pname=overview">Result Statistics</a></li>
+            <li><a href="device-info.html?pname=dev-list">Device Info</a></li>
+            <li><a href="case-coverage.html?pname=overview" style="background-color:#3785d4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Case Coverage</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="main_wrapper_result">
+        <div class="crumbs ">
+            <div class="navigation">
+                <a href="home1.html">Home</a>&nbsp;>&nbsp;<a href="case-coverage.html?pname=overview">Case Coverage</a>&nbsp;>&nbsp;<span id="step_name"></span>
+            </div>
+        </div>
+        <!--<div class="_title-info">Statistics options</div>-->
+        <div class="content_result">
+            <!--<div class="leftbar">-->
+            <!--    <ul>-->
+            <!--        <li id="overview" class="typelist active" onclick="javascript:window.location.href='test-result.html?pname=overview'">Overall trend</li>-->
+            <!--        <li id="case-dist" class="typelist" onclick="javascript:window.location.href='test-result.html?pname=case-dist'">Case distribution</li>-->
+            <!--        <li id="quality" class="typelist" onclick="javascript:window.location.href='test-result.html?pname=quality'">Quality</li>-->
+            <!--        <li id="bug-info" class="typelist" onclick="javascript:window.location.href='test-result.html?pname=bug-info'">Bug information</li>-->
+            <!--    </ul>-->
+            <!--</div>-->
+            <!--<div class="rightbar-info" style="margin-top:10px">-->
+                    
+                    <div class="chart-container-chart">
+                        <div style="width:958px;margin:20px auto">
+                        </div>
+                        <div id="result-chart" style="width:958px;height:500px;border:solid 1px gray;border-radius: 2px;margin:20px auto"></div>
+                    </div>                    
+            <!--</div>-->
+        </div>
+    </div>
+    
+    <div id="footer">
+        <div>
+            <p>Copyright &copy; 2014 Marvell. All rights reserved.&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a>CONTACT US</a>&nbsp;&nbsp;&nbsp;&nbsp;<a>ABOUT SQA</a></p>
+        </div>
+    </div>
+    
+    <!--<div id="sideLayer">-->
+        <!--<a id="feedback" class="layerItem" href="mailto:zhenwang@marvell.com"><img src="/imgs/feedback.png"><br></a>-->
+    <!--</div>-->
+    <!--<script src="/js/sliderPlayer.js"></script>-->
+    
+    <div id="shade-bg"><div id="loading"></div></div>
+
+</body>
+<script type="text/javascript">checkCookie()</script>
+</html>

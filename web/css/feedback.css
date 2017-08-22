@@ -1,0 +1,20 @@
+html,body,ul,li,table,p{padding:0;margin:0;font-family:'microsoft yahei';font-size:16px;list-style:none;}
+.content{height:420px;padding:20px;background-color:white;}
+.item{text-align: left;width:80px;}
+input{width:465px;height:32px;line-height:32px;font-size:16px;border:solid 1px #e2e2e2;border-radius:4px;padding-left:10px;}
+textarea{width:462px;height:170px;padding:10px;border:none;resize:none;}
+.taHolder{border:solid 1px #e2e2e2;border-radius:4px;}
+.imgHolder{border-top:solid 1px #e2e2e2;padding:10px;min-height:36px;}
+.clearfix:after{content:'';clear:both;}
+.select{position:relative;}
+.selected{float:left;width:270px;padding-left:10px;height:32px;line-height:32px;border:solid 1px #e2e2e2;border-radius: 4px 0 0 4px;}
+.selectHandler{float:left;width:10px;height:21px;border:solid 1px #e2e2e2;border-left:none;border-radius: 0 4px 4px 0;cursor:pointer;padding:11px 11px 0 11px;}
+.caret{display:block;font-size:0;border-style:solid dashed dashed dashed;border-width:10px 5px 0 5px;width:0;height:0;border-color:#adadad transparent transparent transparent;}
+.options{position:absolute;top:32px;width:313px;border:solid 1px #e2e2e2;border-radius:0 0 4px 4px;background-color:white;display:none;left:0;}
+.option{width:303px;height:32px;padding-left:10px;line-height:32px;cursor:pointer;}
+.option:hover{background-color:#f6f6f6;}
+.uploadify{float:left;}
+#imgContent{float:left;width:300px;padding-left:10px;color:#666;font-size:14px;}
+.uploadify-queue{display:none;}
+.btn{display:block;cursor:pointer;border-radius:4px;width:100px;height:36px;line-height:36px;text-align:center;color:white;font-size:18px;background-color:#2882c5;float:left;}
+#msg{float:left;height:36px;line-height:36px;padding-left:20px;color:red;}

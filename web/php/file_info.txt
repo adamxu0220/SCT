@@ -1,0 +1,16 @@
+array (
+  'config_path' => 
+  array (
+    'name' => 'tombstone_0624_greenscreen',
+    'type' => 'application/octet-stream',
+    'tmp_name' => '/tmp/phpj4DX0p',
+    'error' => 0,
+    'size' => 672196,
+  ),
+  0 => 
+  array (
+    'project_name' => 'ANDROIDTV_SPRINT_BG4CT',
+    'case_name' => 'asdad',
+    'file_type' => 'config',
+  ),
+)

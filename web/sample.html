@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+
+    <script src="/js/jquery-1.11.1.js"></script>
+    <script src="/js/index_new.js" type="text/javascript"></script>
+    <link href="/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/css/real_sso.css" rel="stylesheet" type="text/css">
+    <link href="/plugins/jquery_ui/jquery-ui.css" rel="stylesheet" />
+    <script src="/js/main.js"></script>
+    <script src="/plugins/jquery_ui/jquery-ui.js"></script>
+    <!--<link href="/css/m-task.css" rel="stylesheet" type="text/css">-->
+    <script src="/js/highcharts.js"></script>
+    <script src="/js/highcharts-3d.js"></script>
+    <script src="/js/exporting.js"></script>
+    <script src="/js/exporting-excel.js"></script>
+
+
+  <script>
+$(function () {
+
+
+    var chart;
+    var pass_cnt = 0, fail_cnt = 0, error_cnt = 0;
+    var pass_array, fail_array, error_array;
+    pass_array = {'pass': 60};
+    fail_array = {'anr': 10, 'tombostone':10, 'fail_bootup':20, 'bootup_uncomplete':5};
+    error_array = {'error': 20};
+    var result_array = new Array();
+    result_array.push(['pass', pass_array]);
+    result_array.push(['fail', fail_array]);
+    result_array.push(['error', error_array]);
+
+
+    for (var key in pass_array){
+        pass_cnt += pass_array[key];
+    }
+    for (var key in fail_array){
+        fail_cnt += fail_array[key];
+    }
+
+    for (var key in error_array){
+        error_cnt += error_array[key];
+    }
+    
+    $(document).ready(function () {
+    var result_data =  [['Pass',   pass_cnt], ['Fail',   fail_cnt], ['Error',  error_cnt]];
+    pie_chart('#container', "Test result", result_data, click_func);
+
+    function click_func(e){
+        var raw_data = result_array[e.point.x][1]
+        var data  = new Array();
+        for (var key in raw_data){
+            data.push([key, raw_data[key]]);
+        }
+
+         pie_chart('#sub_pie_diag', result_array[e.point.x][0] + ' detail infomation', data, null_func);
+         $( "#pie_diag" ).dialog( "open" );
+    }
+    function null_func(e){
+    }
+    function pie_chart(chart_id, title, data, func){	
+    	// Build the chart
+        $(chart_id).highcharts({
+            credits: {
+                enabled: true,
+                href: "http://www.marvell.com",
+                text: "Marvell.com"
+            },
+
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false
+            },
+            title: {
+                text: title
+            },
+            tooltip: {
+        	    pointFormat: '{series.name}: <b>{point.percentage:.1f}%({point.y})</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: true
+                },
+
+                series: {
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function(e) {
+                                    //gen_pie_detail(result_array[e.point.x][0] + ' detail infomation', result_array[e.point.x][1]);
+                                    //$( "#pie_diag" ).dialog( "open" );
+                                    func(e);
+                                }
+                            }
+                        }
+                    }
+            
+            },
+            series: [{
+                type: 'pie',
+                name: 'percentage',
+                data: data 
+            }],
+            
+        
+
+        });
+    }
+            $( "#pie_diag" ).dialog({
+                autoOpen: false,
+                height:455,
+                width: 630,
+                show: {
+                  effect: "fade",
+                  duration: 800
+                },
+                hide: {
+                  effect: "clip",
+                  duration: 500
+                }
+              });
+
+    });
+    
+});	
+
+  </script>
+</head>
+<body>
+  <div id="container" style="min-width:700px;height:400px"></div>
+  <div id="pie_diag"><div id="sub_pie_diag"></div></div>
+</body>
+</html>

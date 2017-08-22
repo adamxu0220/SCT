@@ -1,0 +1,83 @@
+._title{width:1392px;margin:0 auto;height:32px;border:1px solid #e2e2e2;
+		background:#ebebeb;font-size:16px;color:#333333;padding-top:8px;margin-top:25px;padding-left:8px}
+._title-info{width:1292px;margin:0 auto;height:32px;border:1px solid #e2e2e2;
+background:#ebebeb;font-size:16px;color:#333333;padding-top:8px;margin-top:25px;padding-left:8px}
+.content {width:100%;border:1px solid #e2e2e2;border-top:0px;border-bottom:1px solid #e2e2e2;min-height:600px}
+.content_result {
+margin-top: 25px;
+padding: 30px 10px 10px;
+min-height: 600px;
+border: #d5d5d5 solid 1px;
+background-color: #FFF;
+}
+.leftbar {width:190px;height:100%;float:left;border-right:1px solid #e2e2e2;background: #f1f1f1;min-height:600px}
+.leftbar ul li {width:180px;height:27px;padding-left: 10px;padding-top: 5px;cursor:pointer;}
+.leftbar ul li:hover{background-color:#e2e2e2;}
+.leftbar ul li a {font-size:14px;color:#666666;display:inline-block;*display:inline;*zoom:1;width:180px;height:27px;}
+.leftbar ul li.active {color:white;background-color:#2882c5 !important;}
+.leftbar ul li.active a {color:white;}
+.rightbar {width:1209px;float:right;}
+.rightbar-info {width:1109px;float:right;}
+.typelist {cursor:pointer}
+.typelist label{cursor:pointer}
+#task-list{border-collapse: collapse;
+border-spacing: 0;
+zoom: 1;
+width: 100%;}
+.searchbox {width:1000px;padding:20px 0 20px 20px;font-size:14px;border-bottom: 1px dotted #e2e2e2;}
+.searchbox input {display:inline-block;*zoom:1;*display:inline;height:25px;/*margin: 20px;*/line-height:25px;float:left;}
+#search_btn {background:#2882c5;border-radius:2px;height:28px;width:76px;color:white;text-align:center;line-height:28px;margin-top: 3px;display:inline-block;*zoom:1;*display:inline;float:right;margin-right:100px;cursor:pointer;/*position:relative;left:-14px;*/}
+.searchbox a {display:inline-block;*zoom:1;*display:inline;font-size:14px;float:left;line-height:28px;margin-left:18px;}
+.advanced {height:29px;padding:20px;border-bottom: 1px solid #e2e2e2;display:none;}
+.advanced select {width:155px;height:29px;border: 1px solid #e2e2e2;padding-left:5px;margin-left:5px;}
+.paging input[type=text], input[type=password] {
+border-radius: 2px;
+border: solid 1px #dfdfdf;
+vertical-align: middle;
+width: 900px;
+font-family: 'Microsoft YaHei', Î¢ÈíÑÅºÚ, Arial;
+height: 30px;
+line-height: 32px;
+color: #333;
+padding-left: 8px;
+font-size: 14px;
+}
+.chart-container input[type=text] {font-family: 'Microsoft YaHei', Î¢ÈíÑÅºÚ, Arial;vertical-align: middle;border: solid 1px #dfdfdf;height: 22px;}
+input[type=text]:focus{
+   border: 1px solid #26a5ec;
+   box-shadow: 0 0 3px 0 #95B8E7;
+}
+.joblist table thead tr {height:32px;background:#f1f1f1;font-weight:bold}
+.joblist table td {text-align:left;height:40px}
+.joblist table tbody tr {height:36px;border-bottom:1px dotted #e0e0e0;}
+.joblist table tbody tr:hover {background:#e9e9e9;}
+.joblist table thead tr td:first-child, tbody tr td:first-child {padding-left:10px}
+.joblist2 .datagrid-header-row{font-weight:bold;height:35px}
+.joblist2 .datagrid-pager{height:35px;padding-top:1.2px}
+.joblist2 .datagrid-row{height:43.5px}
+.noresult {text-align: center;margin-top: 64px;}
+.noresult a {text-decoration:underline;}
+._clear {clear:left;width:0px;height:0px;}
+.paging {text-align: right;margin-top: 10px;font-size:0;margin-bottom:10px;margin-right:10px}
+.paging span{font-size:14px;margin:0 2px;line-height:22px;}
+.paging .totalnum {color: #26a5ec;}
+.paging .left,.paging .right {display: inline-block;*zoom:1;*display:inline;vertical-align:bottom;width: 22px;height: 22px;border: 1px solid #d3d7da;text-align: center;
+			border-radius: 3px;cursor:pointer;}
+.paging .page {cursor:pointer;display: inline-block;*zoom:1;*display:inline;vertical-align:bottom;width: 22px;height: 22px;border: 1px solid #d3d7da;text-align: center;border-radius: 3px;}
+.paging .page_no input {width: 35px;height: 22px;padding: 0;text-align:center;border-color: #d3d7da;border-radius: 3px;position: relative;line-height: 22px;top: 1px;}
+.paging .page_no input:focus{border-color:#2882c5;}
+.paging .jump {color:#666666;vertical-align:bottom;cursor:pointer;border: 1px solid #d3d7da;border-radius: 3px;width: 40px;height: 22px;display: inline-block;text-align: center;}
+.paging .active {background:#26a5ec;color:white;}
+
+.clearfix:after{content:'';clear:both;}
+.select{position:relative;display: inline-block;*display:inline;*zoom:1;padding-right: 8px}
+.selected{float:left;width:140px;padding-left:10px;height:32px;line-height:32px;border:solid 1px #e2e2e2;border-radius: 4px 0 0 4px;}
+.selectHandler{float:left;width:10px;height:21px;border:solid 1px #e2e2e2;border-left:none;border-radius: 0 4px 4px 0;padding:11px 11px 0 11px;}
+.caret{display:block;font-size:0;border-style:solid dashed dashed dashed;border-width:10px 5px 0 5px;width:0;height:0;border-color:#adadad transparent transparent transparent;}
+.options{position:absolute;z-index: 99;top:32px;width:183px;border:solid 1px #e2e2e2;border-radius:0 0 4px 4px;background-color:white;display:none;left:0;}
+.option{width:173px;height:32px;padding-left:10px;line-height:32px;cursor:pointer;}
+.option:hover{background-color:#f6f6f6;}
+.current-selected{background-color:#f6f6f6;}
+.select-tit{cursor:pointer;}
+#task-list thead td {cursor:pointer}
+#task-list thead td:hover {color:red}

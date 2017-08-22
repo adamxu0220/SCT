@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>S.C.T</title>
+    <link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
+    <script src="/js/jquery-1.11.1.js"></script>
+    <script src="/js/index_new.js" type="text/javascript"></script>
+    <link href="/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/css/real_sso.css" rel="stylesheet" type="text/css">
+    <script src="/js/main.js"></script>
+    <script src="/js/confirm.js"></script>
+    <link href="/css/m-task.css" rel="stylesheet" type="text/css">
+    <script src="/js/highcharts.js"></script>
+    <script src="/js/highcharts-3d.js"></script>
+    <script src="/js/exporting.js"></script>
+    <script src="/js/exporting-excel.js"></script>
+    <!--<script src="/js/sorttable.js"></script>-->
+    <link rel="stylesheet" type="text/css" href="/plugins/jquery-easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/plugins/jquery-easyui/themes/icon.css">
+    <script type="text/javascript" src="/plugins/jquery-easyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/plugins/jquery-easyui/datagrid-detailview.js"></script>
+</head>
+<script>
+    $(function(){
+		var bd = document.body;
+		var shade = document.getElementById("shade-bg");
+		shade.style.width = bd.scrollWidth+"px";
+		shade.style.height = bd.scrollHeight+"px";
+		var screenW=document.documentElement.clientWidth;
+		if(screenW < 1200){
+			$(".bd-cloud-topbar,.nav_w,#footer").css("width","1200");
+			////$("#account").css("left","1040px");
+		}
+		$( ".bd-cloud-dropdown-name").click(
+			function() {
+				$(".bd-cloud-dropdown-menu").slideToggle("fast");
+			});
+        $(".active").removeClass("active");
+        $("#"+location.search.slice(1).split("=")[1]).addClass("active");
+        $(".leftbar").css("height", $(".content").height()+"px");
+		
+		$('#device_info_list').datagrid({
+			view: detailview,
+			detailFormatter:function(index,row){return '<div style="padding:2px"><table class="ddv"></table></div>';},
+			onExpandRow: function(index,row){
+				var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
+				ddv.datagrid({
+					url:'/php/get_device_detail.php?conn_id='+row.conn_id + '&mac_addr='+row.mac_addr,
+					fitColumns:true,
+					singleSelect:true,
+					loadMsg:'',
+					height:'auto',
+					columns:[[
+					//{field:'conn_id',title:'Device IP',width:200},
+					//{field:'client_ip',title:'Device IP',width:120,sortable:true},
+                                        {field:'mac_addr',title:'Device MAC',width:120,sortable:true},
+                                        {field:'client_ip',title:'Device IP',width:120,sortable:true},
+					{field:'owner',title:'Owner',width:80,sortable:true},
+					{field:'dut_type',title:'DUT type',width:100,sortable:true},
+					{field:'sw_version',title:'SW version',width:450,sortable:true},
+					{field:'start_time',title:'Create time',width:150,sortable:true},
+					{field:'status',title:'Status',width:80,sortable:true},
+					]],
+					onResize:function(){$('#device_info_list').datagrid('fixDetailRowHeight',index);},
+					onLoadSuccess:function(){
+						setTimeout(function(){$('#device_info_list').datagrid('fixDetailRowHeight',index);},0);
+					}
+				});
+				$('#device_info_list').datagrid('fixDetailRowHeight',index);
+			}	
+        });
+        if(window.location.href.indexOf("dev-list")>-1){
+			getDeviceList();
+            $("#step_name").text("Device list");
+            $(".joblist1").hide();
+            $(".joblist2").show(); 
+        }else{
+			getOnlineDeviceDis();
+            $("#step_name").text("Device distribution");
+            $(".joblist2").hide();
+            $(".joblist1").show();   
+        }
+    });
+</script>
+<body>
+    <div class="bd-cloud-topbar">
+	<ul class="bd-clout-user-nav">
+	    <li class="bd-cloud-dropdown bd-clout-user-nav-item">
+		<span class="bd-cloud-dropdown-name">
+		    <a id="user" class="bd-cloud-a"></a>
+		    <i class="bd-cloud-dropdown-ico"></i>
+		</span>
+		<ul class="bd-cloud-dropdown-menu">
+		    <li class="bd-cloud-dropdown-item" id="create-task" onclick="window.location.href='add-case.html'">New task</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="task-management" onclick="window.location.href='task-management.html?pname=my-task'">Task Management</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="log-off" onclick="deleteCookie()">Log off</li>
+		</ul>
+	    </li>
+	    <li class="bd-clout-user-nav-item"><a href="mailto:zhenwang@marvell.com" class="bd-cloud-a">Help</a></li>
+	<ul>
+    </div>
+		
+    <div class="logo"><a href="javascript:void(0)"></a></div>
+
+    <div class="nav_w">
+      <div class="nav">
+        <ul>
+            <li><a href="home1.html">Home</a></li>
+            <li><a href="add-case.html">Create Task</a></li>
+            <li><a href="task-management.html?pname=my-task">Task Managment</a></li>
+            <li><a href="test-result.html?pname=overview">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result Statistics</a></li>
+            <li><a href="device-info.html?pname=dev-list" style="background-color:#3785d4">Device Info</a></li>
+            <li><a href="case-coverage.html?pname=overview">Case Coverage</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="main_wrapper_info">
+        <div class="crumbs ">
+            <div class="navigation">
+                <a href="home1.html">Home</a>&nbsp;>&nbsp;<a href="device-info.html?pname=dev-list">Device Info</a>&nbsp;>&nbsp;<span id="step_name"></span>
+            </div>
+        </div>
+        <div class="_title-info">Device information</div>
+        <div class="content">
+            <div class="leftbar">
+                <ul>
+                    <li id="dev-list" class="typelist active" onclick="javascript:window.location.href='device-info.html?pname=dev-list'">Device list</li>
+                    <li id="dev-dist" class="typelist" onclick="javascript:window.location.href='device-info.html?pname=dev-dist'">Device distribution</li>
+                </ul>
+            </div>
+            <div class="rightbar-info">
+                <div class="joblist2">
+		    <table id="device_info_list" style="width:100%;height:600px" title="" singleSelect="true" fitColumns="true" data-options="
+			pagination:true,
+			remoteSort:false,
+			pageSize:12,
+			pageList:[12,20,30,40,50],
+			rowStyler: function(index,row){
+			    return 'height:43px;';
+			}">
+			<thead>
+			    <tr>
+				<th data-options="field:'mac_addr',width:120,sortable:true">Device MAC</th>
+                                 <th data-options="field:'device_ip',width:120,sortable:true">Device IP</th>
+				<th data-options="field:'owner',width:80,sortable:true">Owner</th>
+				<th data-options="field:'dut_type',width:100,sortable:true">DUT type</th>
+				<th data-options="field:'sw_version',width:450,sortable:true">SW version</th>
+				<th data-options="field:'start_time',width:150,sortable:true">Create time</th>
+				<th data-options="field:'status',width:80,sortable:true,align:'center'">Status</th>
+                                <th data-options="field:'action',width:80,sortable:true,align:'center'">Action</th>
+			    </tr>
+			</thead>
+		    </table>
+                </div>
+                
+                <div class="joblist1">
+                    <div id="online_device_dist" style="width:950px;height:500px;margin:50px auto"></div>
+                    <!--<div id="	" style="width:950px;height:500px"></div>-->
+                </div>
+                
+            </div>
+        </div>
+  
+    </div>
+    
+    <div id="footer">
+        <div>
+            <p>Copyright &copy; 2014 Marvell. All rights reserved.&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a>CONTACT US</a>&nbsp;&nbsp;&nbsp;&nbsp;<a>ABOUT SQA</a></p>
+        </div>
+    </div>
+    
+    <!--<div id="sideLayer">-->
+        <!--<a id="feedback" class="layerItem" href="mailto:zhenwang@marvell.com"><img src="/imgs/feedback.png"><br></a>-->
+    <!--</div>-->
+    <!--<script src="/js/sliderPlayer.js"></script>-->
+
+    <div id="shade-bg"><div id="loading"></div></div>
+    
+</body>
+<script type="text/javascript">checkCookie()</script>
+</html>

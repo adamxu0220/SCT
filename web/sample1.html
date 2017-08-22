@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<script type="text/javascript">
+    $(function(){
+        //按钮单击时执行
+        $("#testAjax").click(function(){
+              //Ajax调用处理
+            document.getElementById('myDiv').style.display='none'
+            document.getElementById('p').style.display='block'
+            var html = $.ajax({
+               type: "POST",
+               url: "sample.php",
+               //data: "name=garfield&age=18",
+               async: false
+ //              beforeSend: function () {
+   //            $("loading").show();
+     //          },
+            }).responseText;
+            //document.getElementById('p').style.display='none'
+            $("#p").html('<h2>'+html+'</h2>');
+         });
+    });
+</script>    
+</head>
+    <body>
+        <div id="myDiv"><h2>ready to run test.sh</h2></div>
+        <div id="p" style="display:none"><h2>loading...</h2></div>
+        <button id="testAjax" type="button">click to run</button>
+    </body>
+
+</html>

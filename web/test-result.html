@@ -1,0 +1,287 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>S.C.T</title>
+    <link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
+    <!--<script src="/plugins/skins/jquery.icheck.js"></script>-->
+    <!--<link href="/plugins/skins/all.css" rel="stylesheet" type="text/css">-->
+    <link href="/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/css/real_sso.css" rel="stylesheet" type="text/css">
+    <link href="/css/m-task.css" rel="stylesheet" type="text/css">
+    <link href="/plugins/jquery_ui/jquery-ui.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="/css/jquery.multiselect.css" />
+    <script src="/js/jquery-1.11.1.js"></script>
+    <script src="/js/index_new.js" type="text/javascript"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/confirm.js"></script>
+    <script src="/plugins/jquery_ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="/js/jquery.multiselect.js"></script>
+    <script src="/js/highcharts.js"></script>
+    <script src="/js/highcharts-3d.js"></script>
+    <script src="/js/exporting.js"></script>
+    <script src="/js/exporting-excel.js"></script>
+    <script src="/js/sorttable.js"></script>
+</head>
+<style>
+ .myClass{width:184px;}
+</style>
+<script>
+    $(function(){
+		var bd = document.body;
+		var shade = document.getElementById("shade-bg");
+		shade.style.width = bd.scrollWidth+"px";
+		shade.style.height = bd.scrollHeight+"px";
+		var screenW=document.documentElement.clientWidth;
+		if(screenW < 1200){
+			$(".bd-cloud-topbar,.nav_w,#footer").css("width","1200px");
+			//$("#account").css("left","1040px");
+		}
+		$( ".bd-cloud-dropdown-name").click(
+			function() {
+				$(".bd-cloud-dropdown-menu").slideToggle("fast");
+		});
+		if(window.location.href.indexOf("workload-info")==-1){
+		    getResultInfo();
+		}else{
+		    $("#select_dut_type").multiselect({selectedText:"DUT type",classes: "myClass",height:"auto",show:"fade",hide:"fade"});
+		    $("#select_sw_version").multiselect({selectedText:"Sw version",classes: "myClass",height:"auto",show:"fade",hide:"fade"});
+		    $("#select_case").multiselect({selectedText:"Mutiple case",classes: "myClass",height:"auto",show:"fade",hide:"fade"});
+		}
+		$("select[name='chart_filter']").next().attr("style","");
+			$(".active").removeClass("active");
+			$("#"+location.search.slice(1).split("=")[1]).addClass("active");
+			$( "#detail_dialog" ).dialog({
+			autoOpen: false,
+			title: "Detail records",
+			height:500,
+			width: 1200,
+			show: {
+			  effect: "fade",
+			  duration: 800
+			},
+			hide: {
+			  effect: "clip",
+			  duration: 500
+			},		
+			beforeClose: function( event, ui ) {
+			//alert("close");
+			}
+		});
+	    $( "#pie_diag" ).dialog({
+                autoOpen: false,
+		height:455,
+                width: 630,
+                show: {
+                  effect: "fade",
+                  duration: 800
+                },
+                hide: {
+                  effect: "clip",
+                  duration: 500
+                }		
+              }); 
+	$( "#from" ).datepicker({
+	    pickTime: false,
+	    dateFormat: "yy-mm-dd",
+	    showOn: "button",
+	    buttonImage: "/imgs/calendar.gif",
+	    buttonImageOnly: true,
+	    buttonText: "Select date",
+	    defaultDate: "+1w",
+	    changeMonth: true,
+	    //numberOfMonths: 3,
+	    onClose: function( selectedDate ) {
+	      $( "#to" ).datepicker( "option", "minDate", selectedDate );
+	    }
+	});
+        $( "#to" ).datepicker({
+            pickTime: false,
+            dateFormat: "yy-mm-dd",
+            showOn: "button",
+            buttonImage: "/imgs/calendar.gif",
+            buttonImageOnly: true,
+            buttonText: "Select date",
+            defaultDate: "+1w",
+            changeMonth: true,
+            //numberOfMonths: 3,
+            onClose: function( selectedDate ) {
+              $( "#from" ).datepicker( "option", "maxDate", selectedDate );
+            }
+        });
+        var now = new Date().getTime() - 86400000;
+        var last_week = (new Date().getTime()) - (86400000 * 7);
+        var str_now = stamp_format(now, "YY-MM-dd");
+        var str_last_week = stamp_format(last_week, "YY-MM-dd");
+        $("#from").val(str_last_week);
+        $("#to").val(str_now);
+        $(".leftbar").css("height", $(".rightbar").height()+"px");
+        var project_arg = window.location.href.split("=")[1];
+        switch (project_arg){
+            case "overview":
+				$("#step_name").text("Overall trend");
+				$(".flowstep4").addClass("flowstep4_1");
+				getOverTrendData(undefined, undefined);
+				$("input[name='cal']").change(function(){
+					getOverTrendData(undefined, undefined);
+				});
+				$("select[name='chart_filter']").on("multiselectclick", function(event, ui){
+					getOverTrendData(undefined, undefined);
+				});
+                break;
+            case "case-dist":
+				$("#step_name").text("Case distribution");
+				$(".flowstep4").addClass("flowstep4_2");
+				getCaseDistData();
+				$("input[name='cal']").change(function(){
+					getCaseDistData();
+				});
+				$("select[name='chart_filter']").on("multiselectclick", function(event, ui){
+					getCaseDistData();
+				});
+                break;
+            case "quality":
+				$("#step_name").text("Quality");
+				$(".flowstep4").addClass("flowstep4_3");
+				getQualityData();
+				$("input[name='cal']").change(function(){
+					getQualityData();
+				});
+				$("select[name='chart_filter']").on("multiselectclick", function(event, ui){
+					getQualityData();
+				});
+
+                break;
+            case "workload-info":
+				$("#step_name").text("System workload");
+				$(".flowstep4").addClass("flowstep4_4");
+				getWorkloadData();
+				$("input[name='cal']").change(function(){
+				    getWorkloadData();
+				});
+                break;
+            default:
+                break;
+        }
+    });
+</script>
+<body>
+    
+    <div class="bd-cloud-topbar">
+	<ul class="bd-clout-user-nav">
+	    <li class="bd-cloud-dropdown bd-clout-user-nav-item">
+		<span class="bd-cloud-dropdown-name">
+		    <a id="user" class="bd-cloud-a"></a>
+		    <i class="bd-cloud-dropdown-ico"></i>
+		</span>
+		<ul class="bd-cloud-dropdown-menu">
+		    <li class="bd-cloud-dropdown-item" id="create-task" onclick="window.location.href='add-case.html'">New task</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="task-management" onclick="window.location.href='task-management.html?pname=my-task'">Task Management</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="log-off" onclick="deleteCookie()">Log off</li>
+		</ul>
+	    </li>
+	    <li class="bd-clout-user-nav-item"><a href="mailto:zhenwang@marvell.com" class="bd-cloud-a">Help</a></li>
+	<ul>
+    </div>
+		
+    <div class="logo"><a href="javascript:void(0)"></a></div>
+
+    <div class="nav_w">
+      <div class="nav">
+        <ul>
+            <li><a href="home1.html">Home</a></li>
+            <li><a href="add-case.html">Create Task</a></li>
+            <li><a href="task-management.html?pname=my-task">Task Managment</a></li>
+            <li><a href="test-result.html?pname=overview" style="background-color:#3785d4">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result Statistics</a></li>
+            <li><a href="device-info.html?pname=dev-list">Device Info</a></li>
+            <li><a href="case-coverage.html?pname=overview">Case Coverage</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="main_wrapper_result">
+        <div class="crumbs ">
+            <div class="navigation">
+                <a href="home1.html">Home</a>&nbsp;>&nbsp;<a href="test-result.html?pname=overview">Result Statistics</a>&nbsp;>&nbsp;<span id="step_name"></span>
+            </div>
+        </div>
+        <!--<div class="_title-info">Statistics options</div>-->
+        <div class="content_result">
+            <!--<div class="leftbar">-->
+            <!--    <ul>-->
+            <!--        <li id="overview" class="typelist active" onclick="javascript:window.location.href='test-result.html?pname=overview'">Overall trend</li>-->
+            <!--        <li id="case-dist" class="typelist" onclick="javascript:window.location.href='test-result.html?pname=case-dist'">Case distribution</li>-->
+            <!--        <li id="quality" class="typelist" onclick="javascript:window.location.href='test-result.html?pname=quality'">Quality</li>-->
+            <!--        <li id="bug-info" class="typelist" onclick="javascript:window.location.href='test-result.html?pname=bug-info'">Bug information</li>-->
+            <!--    </ul>-->
+            <!--</div>-->
+	    <div class="flowstep4">
+		<ul>
+		  <li id="overview" style="cursor:pointer" class="step_1" onclick="javascript:window.location.href='test-result.html?pname=overview'">Result overview</li>
+		  <li id="case-dist" style="cursor:pointer" class="step_2" onclick="javascript:window.location.href='test-result.html?pname=case-dist'">Result distribution</li>
+		  <li id="quality" style="cursor:pointer" class="step_3" onclick="javascript:window.location.href='test-result.html?pname=quality'">Passrate trend</li>
+		  <li id="workload-info" style="cursor:pointer" class="step_4" onclick="javascript:window.location.href='test-result.html?pname=workload-info'">System workload</li>
+		</ul>
+	    </div>
+            <!--<div class="rightbar-info" style="margin-top:10px">-->
+                    
+                    <div class="chart-container-chart">
+                        <div style="width:958px;margin:20px auto">
+                            <p>From: <input type="text" name="cal" id="from" readonly="readonly" style="width:120px;text-align:center"></input>
+                            to: <input type="text" name="cal" id="to" readonly="readonly" style="width:120px;text-align:center"></input>
+				<select name="chart_filter" id="select_case" multiple="multiple" size="5"></select>
+				<select name="chart_filter" id="select_dut_type" multiple="multiple" size="5"></select>
+				<select name="chart_filter" id="select_sw_version" multiple="multiple" size="5"></select>
+                            </p>
+                        </div>
+                        <div id="result-chart" style="width:958px;height:500px;border:solid 1px gray;border-radius: 2px;margin:20px auto"></div>
+                    </div>                    
+	    <div id="detail_dialog">
+		<table>
+		    <table id="pie_task_list" style="font-size:14px;width:100%;" class="sortable">
+			<thead>
+			    <tr>
+				<td>Case name</td>
+				<td>DUT type</td>
+				<td>SW version</td>
+				<td>Owner</td>
+				<td>Start time</td>
+				<td>End time</td>
+				<td>Result</td>
+			    </tr>
+			</thead>
+			<tbody></tbody>
+                    </table>
+                    <div class="paging">
+			<span style='font-size: 13px;margin-right: 10px;'>Total&nbsp;<span class="totalnum"></span>&nbsp;records</span>
+			<span class="left"><img src="/imgs/paging_left.png"/></span>
+			<span id="page-num" style="margin:0;padding:0"></span>
+			<span class="right"><img src="/imgs/paging_right.png"/></span>
+			<span class="page_no"><input type="text" name="page_no" class="page_no_s"></input></span>
+			<span class="jump">Go</span>
+                    </div>                             
+		</table>
+	    </div>
+	    <div id="pie_diag"><div id="sub_pie_diag"></div></div>
+            <!--</div>-->
+        </div>
+    </div>
+    
+    <div id="footer">
+        <div>
+            <p>Copyright &copy; 2014 Marvell. All rights reserved.&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a>CONTACT US</a>&nbsp;&nbsp;&nbsp;&nbsp;<a>ABOUT SQA</a></p>
+        </div>
+    </div>
+    
+    <!--<div id="sideLayer">-->
+        <!--<a id="feedback" class="layerItem" href="mailto:zhenwang@marvell.com"><img src="/imgs/feedback.png"><br></a>-->
+    <!--</div>-->
+    <!--<script src="/js/sliderPlayer.js"></script>-->
+    
+    <div id="shade-bg"><div id="loading"></div></div>
+
+</body>
+<script type="text/javascript">checkCookie()</script>
+</html>

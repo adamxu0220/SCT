@@ -1,0 +1,548 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>S.C.T</title>
+    <script src="/js/jquery-1.11.1.js"></script>
+    <link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
+    <link href="/plugins/skins/all.css" rel="stylesheet" type="text/css">
+    <link href="/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/css/real_sso.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="/plugins/jquery-easyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/plugins/jquery-easyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/plugins/jquery-easyui/themes/color.css">
+    <link rel="stylesheet" type="text/css" href="/plugins/jquery-easyui/demo/demo.css">
+    <link rel="stylesheet" href="/plugins/jquery_ui/jquery-ui.css">
+    <script src="/js/jquery-1.11.1.js"></script>
+    <script type="text/javascript" src="/js/json2.js"></script>
+    <script src="/js/index_new.js" type="text/javascript"></script>
+    <script src="/plugins/skins/jquery.icheck.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/confirm.js"></script>
+    <script src="/plugins/jquery_ui/jquery-ui.js"></script>
+    <script type="text/javascript" src="/plugins/jquery-easyui/jquery.easyui.min.js"></script>
+    <style>
+	.tooltip-case {width:200px;z-index:100000;font: 14px/1.5 "Microsoft Yahei","Helvetica Neue",Helvetica,Arial,sans-serif;color:darkmagenta;WORD-BREAK: break-all; WORD-WRAP: break-word}
+    </style>
+    <script type="text/javascript">
+        function changeAppBind() {
+            $("#compatible_test").bind({
+                click: function() {
+                    $(this).addClass("cur");
+                    $("#function_test").removeClass("cur");
+                    $("#error_info").hide();
+                    $("#next_step1").attr("class", "green_button");
+                }
+            });	
+            $("#function_test").bind({
+                click: function() {
+                    $(this).addClass("cur");
+                    $("#compatible_test").removeClass("cur");
+                    if (true) {
+                            var errorMsg = "sorry, DUT-only mode not supported now !";
+                            $("#error_info").show();
+                            $("#error_info").html(errorMsg);
+                            $("#next_step1").attr("class", "disabled_button");
+                            return;
+                    }
+                    $("#next_step1").attr("class", "green_button");
+                    $("#error_message_div").hide();
+                }
+            });
+			var checked_case_id = new Array();
+			var is_alert = true;
+                        var is_view_doc = false;
+			$('#case-info').datagrid({
+                                onClickCell: function(index,field,value){
+                                    if (field=="document_url"){
+                                        is_alert = false;
+                                        is_view_doc = true;
+                                        //alert("onClickCell");
+                                    }
+                                    else{
+                                        is_alert = true;
+                                        is_view_doc = false;
+                                    }
+                                },
+
+                                onSelect: function(index,row){
+                                    //alert("onSelect");
+                                    if (is_alert == false && is_view_doc == true){
+                                        //alert("onSelect");
+                                        is_view_doc = false;
+                                        $('#case-info').datagrid('unselectRow', index);
+                                    }
+                                },
+                                onUnselect: function(index,row){
+                                    //alert("onUnSelect");
+                                    if (is_alert == false && is_view_doc == true){
+                                        //alert("onUnSelect");
+                                        is_view_doc = false;
+                                        $('#case-info').datagrid('selectRow', index);
+                                    }
+                                },
+
+                                onClickRow: function(index, data){
+                                        //alert("onClickRow");
+                                },
+
+				onCheck: function(rowIndex,rowData){
+					if(!is_alert){return}
+					var case_id = rowData["case_id"];
+					var dut_type = rowData["dut_type"];
+					var case_name = rowData["case_name"];
+					if($.inArray(case_id, checked_case_id) == -1){
+						checked_case_id.push(case_id);
+					}
+					getCaseConfig(case_id, dut_type, case_name, "");
+					//MTC.showFeedback(case_id, dut_type, case_name);
+				},
+				onUncheck: function(rowIndex,rowData){
+				var case_id = rowData["case_id"];
+				checked_case_id.splice($.inArray(case_id, checked_case_id),1);
+				},
+				onLoadSuccess: function(data){
+					$('#case-info').datagrid('reload');
+					for(var i=0;i<data["rows"].length;i++){
+						var case_id = data["rows"][i]["case_id"];
+						if($.inArray(case_id, checked_case_id)>-1){
+							is_alert = false;
+							$('#case-info').datagrid('checkRow', i);
+							is_alert = true;
+						}
+					}
+				}
+			});
+			var checked_device_id = new Array();
+			$('#online-device-info').datagrid({
+					onCheck: function(rowIndex,rowData){
+					var device_id = rowData["device_id"];
+					if($.inArray(device_id, checked_device_id) == -1){
+						checked_device_id.push(device_id);
+					}
+					},
+					onUncheck: function(rowIndex,rowData){
+					var device_id = rowData["device_id"];
+					checked_device_id.splice($.inArray(device_id, checked_device_id),1);
+				},
+				onLoadSuccess: function(data){
+					$('#online-device-info').datagrid('reload');
+					for(var i=0;i<data["rows"].length;i++){
+						var device_id = data["rows"][i]["device_id"];
+						if($.inArray(device_id, checked_device_id)>-1){
+						$('#online-device-info').datagrid('checkRow', i);
+						}
+					}
+				}
+			});
+			$('#dut_type_create').datagrid({
+				onLoadSuccess: function(data){
+				$('#dut_type_create').datagrid('reload');
+				}
+			});
+			$("#device_classify input").bind({
+				click: function() {
+					if($(this).attr("checked")){$(this).attr("checked",false)}
+					else{$(this).attr("checked",true)};
+					getOnlineDeviceInfo($(this).attr("id"));
+				}
+			});
+		}
+		var is_popup = false;
+        $(function(){
+			/*var bd = document.body;
+			var shade = document.getElementById("shade-bg");
+			shade.style.width = bd.scrollWidth+"px";
+			shade.style.height = bd.scrollHeight+"px";*/
+			var screenW=document.documentElement.clientWidth;
+			if(screenW < 1000){
+			$(".bd-cloud-topbar,.nav_w,#footer").css("width","1000px");
+			//$("#account").css("left","840px");
+			}
+			$( ".bd-cloud-dropdown-name").click(
+			function() {
+				$(".bd-cloud-dropdown-menu").slideToggle("fast");
+			});
+            $('#main4 input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%'
+            });
+			changeAppBind();
+            for(var step=1;step<=4;step++){
+                $("#next_step"+step).bind({
+					click: function() {
+						if ($(this).attr("class") == "disabled_button") {
+								return;
+						}
+						var btn_id = $(this).attr("id").substring(9);
+						switch (btn_id){
+							case "1":
+								$("#step_name").text("Select DUT type");
+								getDutType();
+								$("#main"+$(this).attr("id").substring(9)).hide();
+								$("#main"+(parseInt($(this).attr("id").substring(9))+1)).show();
+								break;
+							case "2":
+								if(!getSelectedDutType()){break}
+								$("#step_name").text("Select Cases");
+								$("#main"+$(this).attr("id").substring(9)).hide();
+								$("#main"+(parseInt($(this).attr("id").substring(9))+1)).show();
+								$("#case_classify").empty();
+								getCaseInfo();
+								break;
+							case "3":
+								if(!getSelectedCase()){break}
+								$("#step_name").text("Select Device");
+								$("#main"+$(this).attr("id").substring(9)).hide();
+								$("#main"+(parseInt($(this).attr("id").substring(9))+1)).show();
+								getOnlineDeviceInfo();
+								break;
+							case "4":
+								if(!getSelectedDevice()){break}
+								submitTask();
+								$("#step_name").text("Create success");
+								$("#main"+$(this).attr("id").substring(9)).hide();
+								$("#main"+(parseInt($(this).attr("id").substring(9))+1)).show();
+								var count = 3;
+								setTimeout("counter("+count+")", 0);
+								break;
+							default:
+								break;
+						}
+					}
+				});
+								
+				$("#prev_step"+step).bind({
+					click: function() {
+						if ($(this).attr("class") == "disabled_button") {return;}
+						var btn_id = $(this).attr("id").substring(9);
+						switch (btn_id){
+							case "1":
+								break;
+							case "2":
+								$("#main"+$(this).attr("id").substring(9)).hide();
+								$("#main"+(parseInt($(this).attr("id").substring(9))-1)).show();
+								break;
+							case "3":
+								$("#main"+$(this).attr("id").substring(9)).hide();
+								$("#main"+(parseInt($(this).attr("id").substring(9))-1)).show();
+								break;
+							case "4":
+								$("#main"+$(this).attr("id").substring(9)).hide();
+								$("#main"+(parseInt($(this).attr("id").substring(9))-1)).show();
+								break;
+							default:
+								break;
+						}
+					}
+				});	
+			}
+        });
+</script>
+</head>
+<body>
+    <div class="bd-cloud-topbar">
+	<ul class="bd-clout-user-nav">
+	    <li class="bd-cloud-dropdown bd-clout-user-nav-item">
+		<span class="bd-cloud-dropdown-name">
+		    <a id="user" class="bd-cloud-a"></a>
+		    <i class="bd-cloud-dropdown-ico"></i>
+		</span>
+		<ul class="bd-cloud-dropdown-menu">
+		    <li class="bd-cloud-dropdown-item" id="create-task" onclick="window.location.href='add-case.html'">New task</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="task-management" onclick="window.location.href='task-management.html?pname=my-task'">Task Management</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="log-off" onclick="deleteCookie()">Log off</li>
+		</ul>
+	    </li>
+	    <li class="bd-clout-user-nav-item"><a href="mailto:zhenwang@marvell.com" class="bd-cloud-a">Help</a></li>
+	<ul>
+    </div>
+		
+    <div class="logo"><a href="javascript:void(0)"></a></div>
+
+    <div class="nav_w">
+      <div class="nav">
+        <ul>
+            <li><a href="home1.html">Home</a></li>
+            <li><a href="add-case.html" style="background-color:#3785d4">Create Task</a></li>
+            <li><a href="task-management.html?pname=my-task">Task Managment</a></li>
+            <li><a href="test-result.html?pname=overview">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result Statistics</a></li>
+            <li><a href="device-info.html?pname=dev-list">Device Info</a></li>
+            <li><a href="case-coverage.html?pname=overview">Case Coverage</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="main_wrapper">
+	
+        <div class="crumbs ">
+            <div class="navigation">
+                <a href="home1.html">Home</a>&nbsp;>&nbsp;<a href="add-case.html">Create task</a>&nbsp;>&nbsp;<span id="step_name">Select Client</span>
+            </div>
+        </div>
+        
+        <div class="content1">
+          <div class="create">
+            <!-- ##Step1## -->
+            <div class="main" id="main1">
+              <div class="flowstep4 flowstep4_1">
+                <ul>
+                  <li class="step_1"><em>1</em> Select Client</li>
+                  <li class="step_2"><em>2</em> Select DUT type</li>
+                  <li class="step_3"><em>3</em> Select Cases</li>
+                  <li class="step_4"><em>4</em> Select Device</li>
+                </ul>
+              </div>
+              <div class="title"><strong>Client type</strong></div>
+              <ul class="select_test_type_w">
+                <li>
+                  <div class="select_test_type" id="app_test_type" style="display: block;">
+                    <div class="box test_type_jrcs cur" id="compatible_test"></div>
+                    <div class="box test_type_gncs" id="function_test"></div>
+                  </div>
+                  <span class="error_tips" style="display: none;" id="error_info"></span>
+                </li>
+                <li>
+                    <a class="green_button" id="next_step1">Next</a>
+                </li>
+              </ul>
+            </div>  
+              
+            <!-- ##Step2## -->
+            <div class="main" id="main2">
+              <div class="flowstep4 flowstep4_2">
+                <ul>
+                  <li class="step_1"><em>1</em> Select Client</li>
+                  <li class="step_2"><em>2</em> Select DUT type</li>
+                  <li class="step_3"><em>3</em> Select Cases</li>
+                  <li class="step_4"><em>4</em> Select Device</li>
+                </ul>
+              </div>
+              <div class="title"><strong>DUT type</strong></div>
+              <ul class="select_test_type_w">
+                <li>
+                    <!--<table id="dut_type_create"></table>-->
+		    <table id="dut_type_create" title="&nbsp;&nbsp;DUT list" style="width:900px;height:auto" data-options="
+			iconCls:'icon-save',
+			singleSelect:true,
+                        checkOnSelect:true,
+			pagination:true,
+			remoteSort:false,
+			pageSize:10,
+                        idField:'dut_type',
+			rowStyler: function(index,row){
+			    return 'height:40px;cursor:pointer';
+			},
+                        ">
+			<thead>
+			    <tr>
+                                <th data-options="field:'ck',checkbox:true,align:'left'"></th>
+				<th data-options="field:'dut_type',width:300,align:'left',sortable:true">DUT Name</th>
+				<th data-options="field:'dut_des',width:400,align:'left',sortable:true">Description</th>
+				<th data-options="field:'dut_num',width:175,align:'center',sortable:true">Online number</th>
+			    </tr>
+			</thead>
+		    </table>
+                </li>
+                <li>
+                    <a class="green_button" href="javascript:;" id="prev_step2">Back</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="green_button" href="javascript:;" id="next_step2">Next</a>
+                </li>
+              </ul>
+            </div>
+    
+            <!-- ##Step3## -->
+            <div class="main" id="main3">
+              <div class="flowstep4 flowstep4_3">
+                <ul>
+                  <li class="step_1"><em>1</em> Select Client</li>
+                  <li class="step_2"><em>2</em> Select DUT type</li>
+                  <li class="step_3"><em>3</em> Select Cases</li>
+                  <li class="step_4"><em>4</em> Select Device</li>
+                </ul>
+              </div>
+              <div class="title"><strong>Select case</strong></div>
+              <ul class="select_test_type_w">
+		<li>
+		    <table class="classify" id="case_classify">
+		    </table>
+		</li>
+                <li>
+		    <table id="case-info" title="&nbsp;&nbsp;Case list" style="width:900px;height:auto" data-options="
+			iconCls:'icon-save',
+			singleSelect:true,
+                        checkOnSelect:true,
+			pagination:true,
+			remoteSort:false,
+			onClickCell: onClickCell,
+			pageSize:10,
+                        idField:'case_name',
+			rowStyler: function(index,row){
+			    return 'height:40px;cursor:pointer';
+			}">
+			<thead>
+			    <tr>
+				<th data-options="field:'ck',checkbox:true,align:'left'"></th>
+				<th data-options="field:'case_name',width:250,align:'left',sortable:true">Case name</th>
+				<!--<th data-options="field:'dut_type',width:110,align:'left',sortable:true">DUT type</th>-->
+				<th data-options="field:'case_type',width:120,align:'left',sortable:true">Case type</th>
+				<th data-options="field:'description',width:350,align:'left'">Description</th>
+                                <th data-options="field:'document_url',editor:'url',width:180,align:'left',
+                                formatter:function(value){
+                                    return '<a href=# onClick=&quot;window.open(\'' + value + '\', \'newdocmuent\', \'fullscreen=1\')&quot;>VIEW</a>';
+                                }
+                                ">Document</th>
+				<!--<th data-options="field:'round_time',width:80,editor:'numberbox',align:'left',sortable:true">Timeout</th>-->
+			    </tr>
+			</thead>
+		    </table>
+                </li>
+                <li>
+                    <a class="green_button" href="javascript:;" id="prev_step3">Back</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a class="green_button" href="javascript:;" id="next_step3">Next</a>
+                </li>
+              </ul>
+            </div>
+              
+            <!-- ##Step4## -->
+            <div class="main" id="main4">
+              <div class="flowstep4 flowstep4_4">
+                <ul>
+                  <li class="step_1"><em>1</em> Select Client</li>
+                  <li class="step_2"><em>2</em> Select DUT type</li>
+                  <li class="step_3"><em>3</em> Select Cases</li>
+                  <li class="step_4"><em>4</em> Select Device</li>
+                </ul>
+              </div>
+              <div class="title"><strong>Select device</strong></div>
+              <ul class="select_test_type_w">
+		<li>
+		    <table class="classify" id="device_classify">
+			<tr>
+			    <td rowspan=2>
+				Default use:&nbsp;&nbsp;
+			    </td>
+			    <td>
+				<input type="checkbox" id="my-devices" checked="checked"></input>
+			    </td>
+			    <td>
+				<label for="my-devices">My devices</label>
+			    </td>
+			    <td>
+				<input type="checkbox" id="others-devices" checked="checked"></input>
+			    </td>
+			    <td>
+				<label for="others-devices">Shared</label>
+			    </td>
+			</tr>
+		    </table>
+		</li>
+                <li>
+		    <table id="online-device-info" title="&nbsp;&nbsp;Device list" style="width:900px;height:auto;border-radius: 4px;" data-options="
+			iconCls:'icon-save',
+			singleSelect:true,
+                        checkOnSelect:true,
+			remoteSort:false,
+			pagination:true,
+			pageSize:10,
+                        idField:'device_ip',
+			rowStyler: function(index,row){
+			    return 'height:40px;;cursor:pointer';
+			}">
+			<thead>
+			    <tr>
+				<th data-options="field:'ck',checkbox:true,align:'left'"></th>
+				<th data-options="field:'device_ip',width:120,align:'left',sortable:true">Device IP</th>
+				<!--<th data-options="field:'dut_type',width:100,align:'left',sortable:true">DUT type</th>-->
+				<th data-options="field:'sw_info',width:354,align:'left',sortable:true">SW version</th>
+				<th data-options="field:'owner_info',width:90,align:'left',sortable:true">Owner</th>
+				<th data-options="field:'start_time',width:150,align:'left',sortable:true">Create time</th>
+				<th data-options="field:'status',width:65,align:'center',sortable:true,styler:cellStyler">Status</th>
+			    </tr>
+			</thead>
+		    </table>
+                </li>
+                <li>
+                    <a class="green_button" href="javascript:;" id="prev_step4">Back</a>
+		    &nbsp;&nbsp;&nbsp;&nbsp;
+		    <a class="green_button" href="javascript:;" id="next_step4">Submit</a>
+                </li>
+              </ul>
+            </div>
+	    
+	    <!-- ##Step5## -->
+            <div class="main" id="main5">
+		<div style="padding:70px 40px 70px 40px;height:400px">
+		    <div style="border:solid 1px #e4f5dc;background-color:#e9fae1;padding:170px 300px;text-align:center;">
+			<div style="background:url('/imgs/success.png') 0 0 no-repeat;height:75px;padding-left:90px;text-align:left;width:500px;margin-left: -50px">
+			    &nbsp;&nbsp;&nbsp;&nbsp;
+			    <div class="fs24" style="color:#339800;">Task create success !</div>
+			    <div>
+				<p><span id="second">3</span>&nbsp;&nbsp;seconds after will automatically jump to "Task Management" page</p>
+				<p>If no automatic jump, please <a href="task-management.html?pname=my-task" style="color:darkmagenta">click here</a></p>
+			    </div>
+			</div>
+		    </div>
+		</div>
+            </div>
+            
+          </div>
+        </div>
+    </div>
+    
+    <div id="footer">
+        <div>
+            <p>Copyright &copy; 2014 Marvell. All rights reserved.&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a>CONTACT US</a>&nbsp;&nbsp;&nbsp;&nbsp;<a>ABOUT SQA</a></p>
+        </div>
+    </div>
+    
+    <!--<div id="sideLayer">-->
+        <!--<a id="feedback" class="layerItem" href="mailto:zhenwang@marvell.com"><img src="/imgs/feedback.png"><br></a>-->
+    <!--</div>-->
+    <!--<script src="/js/sliderPlayer.js"></script>-->
+    <script>
+	$.extend($.fn.datagrid.methods, {
+	    editCell: function(jq,param){
+		return jq.each(function(){
+		    var opts = $(this).datagrid('options');
+		    var fields = $(this).datagrid('getColumnFields',true).concat($(this).datagrid('getColumnFields'));
+		    for(var i=0; i<fields.length; i++){
+			var col = $(this).datagrid('getColumnOption', fields[i]);
+			col.editor1 = col.editor;
+			if (fields[i] != param.field){
+			    col.editor = null;
+			}
+		    }
+		    $(this).datagrid('beginEdit', param.index);
+		    for(var i=0; i<fields.length; i++){
+			var col = $(this).datagrid('getColumnOption', fields[i]);
+			col.editor = col.editor1;
+		    }
+		});
+	    }
+	});
+	function counter(count){
+	    $("#second").html(count);
+	    count--;
+	    if(count >= 0){
+		setTimeout("counter("+count+")", 1000);
+	    }else{
+		window.location.href = "task-management.html?pname=my-task";
+	    }
+	}
+	function cellStyler(value,row,index){
+            //if (value == 'idle' || value == 'busy'){
+            return 'font-weight:bold';
+            //}
+        }
+
+    </script>
+    
+    <!--<div id="shade-bg"><div id="loading"></div></div>-->
+    
+</body>
+<script type="text/javascript">checkCookie()</script>
+</html>

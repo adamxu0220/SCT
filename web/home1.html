@@ -1,0 +1,193 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="gb2312">
+    <title>S.C.T</title>
+    <link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
+    <script src="/js/jquery-1.11.1.js"></script>
+    <script src="/js/index_new.js" type="text/javascript"></script>
+    <link href="/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/css/real_sso.css" rel="stylesheet" type="text/css">
+    <link href="/css/home-slider.css" rel="stylesheet" type="text/css">
+    <script src="/js/index.js"></script>
+    <script src="/js/confirm.js"></script>
+    <script src="/js/add_new_case.js"></script>
+    <script src="/js/ajaxfileupload.js"></script>
+    <link href="/css/m-task.css" rel="stylesheet" type="text/css">
+    <script>
+	$(function(){
+	    var screenW=document.documentElement.clientWidth;
+	    if(screenW < 1100){
+		$(".listHolder").css("width",document.body.clientWidth + "px");
+		$(".testSet").css("width","210px");
+	    }
+	    $( ".bd-cloud-dropdown-name").click(
+		function() {
+		    $(".bd-cloud-dropdown-menu").slideToggle("fast");
+	    });
+	})
+    </script>
+</head>
+<body>
+
+    <div class="bd-cloud-topbar">
+	<ul class="bd-clout-user-nav">
+	    <li class="bd-cloud-dropdown bd-clout-user-nav-item">
+		<span class="bd-cloud-dropdown-name">
+		    <a id="user" class="bd-cloud-a"></a>
+		    <i class="bd-cloud-dropdown-ico"></i>
+		</span>
+		<ul class="bd-cloud-dropdown-menu">
+		    <li class="bd-cloud-dropdown-item" id="create-task" onclick="window.location.href='add-case.html'">New task</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="task-management" onclick="window.location.href='task-management.html?pname=my-task'">Task Management</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="log-off" onclick="deleteCookie()">Log off</li>
+		</ul>
+	    </li>
+	    <li class="bd-clout-user-nav-item"><a href="mailto:zhenwang@marvell.com" class="bd-cloud-a">Help</a></li>
+	<ul>
+    </div>
+		
+    <div class="logo"><a href="javascript:void(0)"></a></div>
+
+    <div class="nav_w">
+      <div class="nav">
+        <ul>
+            <li><a href="home1.html" style="background-color:#3785d4">Home</a></li>
+            <li><a href="add-case.html">Create Task</a></li>
+            <li><a href="task-management.html?pname=my-task">Task Managment</a></li>
+            <li><a href="test-result.html?pname=overview">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result Statistics</a></li>
+            <li><a href="device-info.html?pname=dev-list">Device Info</a></li>
+            <li><a href="case-coverage.html?pname=overview">Case Coverage</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div style="width:100%">
+	<div class="index-head-banner" style="width:100%;">
+	    <ul style="position:absolute;font-size:0px;">
+		<li class="banner-1">
+		    <div class="banner-txt">
+			<h1 style="font-size:64px;margin-top:55px;">S.C.T</h1>
+			<div style="width:400px;margin-left:300px;position: relative;">
+			    <span class="items" style="width:320px">Efficiently platform management</span>
+			    <span class="items">Data analyze</span>
+			    <span class="items">Test case managerment</span>
+			    <!--<span class="items">Others</span>-->
+			</div>
+		    </div>
+		</li>
+		<li class="banner-2">
+		    <div class="banner-txt">
+			<h1 style="font-size:64px;margin-top:55px;">Mutiple Production</h1>
+			<span class="tip" style="font-size:48px;">Support</span>
+			<div style="width:952px;margin-left:150px;position: relative;padding-left: 60px;margin-top:15px">
+			    <span class="items" style="width: 240px;">Android TV</span>
+			    <span class="items" style="width: 290px;">Google Chromecast</span>
+			    <span class="items" style="width: 290px;">Setupbox</span>
+			</div>
+		    </div>
+		</li>
+		<li class="banner-3">
+		    <div class="banner-txt">
+			<h1 style="font-size:64px;margin-top:70px;">Mutiple Testing Features</h1>
+			<div style="width:550px;margin-left:290px;position: relative;">
+			    <span class="items">Common stress test</span>
+			    <span class="items">IP control test</span>
+			    <span class="items" style="margin-top:20px">Google certification test</span>
+			    <!--<span class="items">Others</span>-->
+			</div>
+		    </div>
+		</li>
+		<!--</li><li class="banner-4">
+		    <div class="banner-txt">
+			<h1 style="font-size:64px;"></h1>
+			<span class="tip" style="font-size:36px;margin-top:15px;"></span>
+			<div style="width:902px;margin: 30px auto 0;position: relative;left: 0;padding-left: 120px;">
+			    <span class="items" style="width:300px;"></span>
+			    <span class="items" style="width:300px;"></span>
+			    <span class="items" style="width:300px;"></span>
+			</div>
+		    </div>
+		</li>-->
+	    </ul>
+	    <ol class="dots">
+		<li class="dot dot1 active">
+		1</li><li class="dot dot2">
+		2</li><li class="dot dot3">
+		3</li>
+	    </ol>
+	</div>
+    </div>
+    
+    
+    <div class="listHolder">
+	<div class="sub-title">
+	    <span class="blueborder">AUTOMATION TESTING</span>
+	</div>
+	<div class="testSet firtColumn" id="perfTestSet" type="1" onclick="window.location.href='home-overview.html'">
+	    <div class="setHeader">
+		<div class="setIcon icon_1"></div>
+		<div class="setName">Overview</div>
+	    </div>
+	    <div class="setDesc">
+		<div class="profile">Overview system work status</div>
+		<div class="features">
+		    <ul>
+			<li>a、Test result statistics analyze</li>
+			<li>b、Devices current workload</li>
+			<li>c、Supported test cases in pool</li>
+		    </ul>
+		</div>
+	    </div>
+	</div>
+	 <div class="testSet" id="compaTestSet" type="2" onclick="window.location.href='add-case.html'">
+	    <div class="setHeader">
+		<div class="setIcon icon_2"></div>
+		<div class="setName">Create task</div>
+	    </div>
+	    <div class="setDesc">
+		<div class="profile">Create test pool from case list</div>
+		<div class="features">
+		    <ul>
+			<li>a、Choose test case and device</li>
+			<li>b、Real-time check test status </li>
+			<li>c、Result and error classification</li>
+		    </ul>
+		</div>
+	    </div>
+	</div>
+	 <!-- div class="testSet" id="traveTestSet" type="3" onclick="MTC.alert('Customize case not ready now, please send feedback if needed', 'Advance function')" --!>
+         <div class="testSet" id="traveTestSet" type="3" onclick="addNewCase()">
+	    <div class="setHeader">
+		<div class="setIcon icon_3"></div>
+		<div class="setName">Customize case</div>
+	    </div>
+	    <div class="setDesc">
+		<div class="profile">New test case (advance option)</div>
+		<div class="features">
+		    <ul>
+			<li>a、Add your test case to server</li>
+			<li>b、Familiar with system framework</li>
+			<li>c、Programming capacity required</li>
+		    </ul>
+		</div>
+	    </div>
+	</div>
+    </div>
+
+    <div id="footer">
+        <div>
+            <p>Copyright &copy; 2014 Marvell. All rights reserved.&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a>CONTACT US</a>&nbsp;&nbsp;&nbsp;&nbsp;<a>ABOUT SQA</a></p>
+        </div>
+    </div>
+    
+    <!--<div id="sideLayer">-->
+        <!--<a id="feedback" class="layerItem" href="mailto:zhenwang@marvell.com"><img src="/imgs/feedback.png"><br></a>-->
+    <!--</div>-->
+    <!--<script src="/js/sliderPlayer.js"></script>-->
+
+</body>
+<script type="text/javascript">checkCookie()</script>
+</html>

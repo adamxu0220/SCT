@@ -1,0 +1,145 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>S.C.T</title>
+    <link rel="shortcut icon" href="/imgs/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/plugins/jquery_ui/jquery-ui.css">
+    <link href="/plugins/skins/all.css" rel="stylesheet" type="text/css">
+    <link href="/css/reset.css" rel="stylesheet" type="text/css">
+    <link href="/css/real_sso.css" rel="stylesheet" type="text/css">
+    <link href="/css/m-task.css" rel="stylesheet" type="text/css">
+    <script src="/js/jquery-1.11.1.js"></script>
+    <script src="/plugins/jquery_ui/jquery-ui.js"></script>
+    <script src="/js/index_new.js" type="text/javascript"></script>
+    <script src="/plugins/skins/jquery.icheck.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/confirm.js"></script>
+    <script src="/js/sorttable.js"></script>
+    <style>
+	.tooltip-ui {width:200px;min-height:80px;font: 14px/1.5 "Microsoft Yahei","Î¢ÈíÑÅºÚ",Tahoma,Arial,Helvetica,STHeiti;color:darkmagenta;WORD-BREAK: break-all; WORD-WRAP: break-word}
+	.tooltip-sw {font: 14px/1.5 "Microsoft Yahei","Î¢ÈíÑÅºÚ",Tahoma,Arial,Helvetica,STHeiti;color:darkmagenta;WORD-BREAK: break-all; WORD-WRAP: break-word}
+    </style>
+</head>
+<script>
+    $(function(){
+		var bd = document.body;
+		var shade = document.getElementById("shade-bg");
+		shade.style.width = bd.scrollWidth+"px";
+		shade.style.height = bd.scrollHeight+"px";
+		var screenW=document.documentElement.clientWidth;
+			if(screenW < 1400){
+				$(".bd-cloud-topbar,.nav_w,#footer").css("width","1400px");
+				//$("#account").css("left","1240px");
+			}
+		$( ".bd-cloud-dropdown-name").click(
+			function() {
+				$(".bd-cloud-dropdown-menu").slideToggle("fast");
+			});
+			//hard code
+
+                var CI_id = window.location.href.split("=")[1];
+		getResultInfo_fromCI(CI_id);
+		$(".leftbar").css("height", $(".content").height()+"px");	
+
+    });
+</script>
+<body>
+    
+   <div class="bd-cloud-topbar">
+	<ul class="bd-clout-user-nav">
+	    <li class="bd-cloud-dropdown bd-clout-user-nav-item">
+		<span class="bd-cloud-dropdown-name">
+		    <a id="user" class="bd-cloud-a"></a>
+		    <i class="bd-cloud-dropdown-ico"></i>
+		</span>
+		<ul class="bd-cloud-dropdown-menu">
+		    <li class="bd-cloud-dropdown-item" id="create-task" onclick="window.location.href='add-case.html'">New task</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="task-management" onclick="window.location.href='task-management.html?pname=my-task'">Task Management</li>
+		    <li class="divider"></li>
+		    <li class="bd-cloud-dropdown-item" id="log-off" onclick="deleteCookie()">Log off</li>
+		</ul>
+	    </li>
+		<!--	not implement	-->
+	    <li class="bd-clout-user-nav-item"><a href="mailto:zhenwang@marvell.com" class="bd-cloud-a">Help</a></li>
+	<ul>
+    </div>
+		
+    <div class="logo"><a href="javascript:void(0)"></a></div>
+
+    <div class="nav_w">
+      <div class="nav">
+        <ul>
+            <li><a href="home1.html">Home</a></li>
+            <li><a href="add-case.html">Create Task</a></li>
+            <li><a href="task-management.html?pname=my-task" style="background-color:#3785d4">Task Managment</a></li>
+            <li><a href="test-result.html?pname=overview">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Result Statistics</a></li>
+            <li><a href="device-info.html?pname=dev-list">Device Info</a></li>
+            <li><a href="case-coverage.html?pname=overview">Case Coverage</a></li>
+        </ul>
+      </div>
+    </div>
+						     
+    <div class="main_wrapper_task">
+        <div class="crumbs ">
+            <div class="navigation">
+                <a href="home1.html">Home</a>&nbsp;>&nbsp;<a href="task-management.html?pname=all-task">Task management</a>&nbsp;>&nbsp;<span id="step_name"></span>
+            </div>
+        </div>
+        <div class="_title">Task List</div>
+        <div class="content">
+                <div class="leftbar">
+                    <ul>
+                    </ul>
+                </div>
+                <div class="rightbar">
+		    
+                    <div class="joblist">
+                        <table id="task-list" style="font-size:14px;" class="sortable">
+                            <thead>
+                                <tr>
+                                    <td>ID</td>
+                                    <td>Status</td>
+                                    <td>Case name</td>
+                                    <td>Owner</td>
+                                    <td>DUT type</td>
+                                    <td>Client PC(IP)</td>
+                                    <td>SW version</td>
+				    <td>Start time</td>
+                                    <td style="text-align:center">Report</td>
+				    <td style="text-align:center">Result</td>
+				    <td style="text-align:center">Comment</td>
+                                    <td style="text-align:center">Action</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <div class="paging">
+                            <span style='font-size: 13px;margin-right: 10px;'>Total&nbsp;<span class="totalnum"></span>&nbsp;records</span>
+                            <span class="left"><img src="/imgs/paging_left.png"/></span>
+                            <span id="page-num" style="margin:0;padding:0"></span>
+                            <span class="right"><img src="/imgs/paging_right.png"/></span>
+                            <span class="page_no"><input type="text" name="page_no" class="page_no_s"></input></span>
+                            <span class="jump">Go</span>
+                        </div>                             
+                    </div>
+                </div>
+            </div>
+  
+    </div>
+    
+
+    <div id="footer">
+        <div>
+            <p>Copyright &copy; 2014 Marvell. All rights reserved.&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<a>CONTACT US</a>&nbsp;&nbsp;&nbsp;&nbsp;<a>ABOUT SQA</a></p>
+        </div>
+    </div>
+    
+    
+    <div id="shade-bg"><div id="loading"></div></div>
+    
+</body>
+<script type="text/javascript">checkCookie()</script>
+</html>
